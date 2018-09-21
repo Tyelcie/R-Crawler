@@ -5,10 +5,12 @@ library(scales)
 library(ggpubr)
 source('./src/lago.R')
 
-jobs <- lago('rengongzhineng', 1:30, sleep.time = 3)
+# scrap ------------------------------------------------------------------------
+# jobs <- lago('rengongzhineng', 1:30, sleep.time = 3)
 
 jobs <- readRDS('./data/ai_jobs.rds')
 
+# analysis ---------------------------------------------------------------------
 jobs <- within(jobs, {
   Job <- as.character(Job)
   Location <- as.character(Location)
@@ -42,7 +44,7 @@ jobs <- within(jobs, {
   Dist <- unlist(strsplit(Location, split = '·'))[seq(2, nrow(jobs)*2, by = 2)]
 })
 
-jobs <- jobs[jobs$Degree == '本科',]
+# jobs <- jobs[jobs$Degree == '本科',]
 
 ## barplot -----------------------------------------------------------
 
@@ -57,8 +59,8 @@ ggarrange(b1, b2, ncol = 2)
 
 a <- colorRampPalette(pal_npg()(10))(21)
 b <- pal_npg()(4)
-# belt ---------------------------------------------------------------
 
+# belt ---------------------------------------------------------------
 
 s1 <- belt('Experience', title = '平均薪资与经验', color = b[1], ylab)
 s2 <- belt('Degree', title = '平均薪资与学历', color = b[2], ylab)
