@@ -128,6 +128,9 @@ lago <- function(category, page, sleep.time) {
   return(jobs)
 }
 
+
+# barplot -----------------------------------------------------------------
+
 bar <- function(x, title, devi, ylab = ylab){
   ggplot(jobs, aes(x = jobs[,x])) +
     geom_bar(aes(fill = jobs[,x]), width = 0.7, stat = 'count') +
@@ -138,6 +141,7 @@ bar <- function(x, title, devi, ylab = ylab){
     theme(legend.position = 'none')
   
 }
+
 
 belt <- function(x, title, color, ylab){
   mean_upper <- data.frame(tapply(jobs$Salary_Upper, jobs[,x], mean))
@@ -155,3 +159,4 @@ belt <- function(x, title, color, ylab){
     geom_label(label = round(Salary$Lower,2), y = Salary$Lower, alpha = 0.6) +
     ylim(c(0, 100))
 }
+
