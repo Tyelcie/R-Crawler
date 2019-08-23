@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r cars}
+setwd('E://Github/NSFC')
+library(rvest)
+library(stringr)
+library(XML)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+code <- read_html('subjectcodes.xml', encoding = 'GBK') %>%
+  html_nodes('a span') %>% 
+  html_text(trim = T)
+
+url <- 'http://fund.sciencenet.cn/search?yearStart=2019&subject=H01&category=%E9%9D%A2%E4%B8%8A%E9%A1%B9%E7%9B%AE&submit=list'
+totle <- read_html(url) %>% 
+  html_nodes('div.result_num span#l.l b.blue') %>% 
+  html_text(trim = T)
+page <- ceiling(as.numeric(totle)[1]/10)
+
+url_p <- 'http://fund.sciencenet.cn/search?yearStart=2019&subject=H01&category=%E9%9D%A2%E4%B8%8A%E9%A1%B9%E7%9B%AE&submit=list&page='
+data <- NULL
+for(i in c(1:page)){
+  web_i <- read_html(paste0(url_p, i))
+  title <- web_i %>% 
+    html_nodes('div#resultLst.resultLst div.item p.t a') %>% 
+    html_text(trim = T)
+  
+  author_unit <- web_i %>% 
+    html_nodes('div.item div.d p.ico span i') %>% 
+    html_text(trim = T)
+  
+  author <- author_unit[seq(1, length(author_unit), 2)]
+  unit <- author_unit[seq(2, length(author_unit), 2)]
+
+  code <- web_i %>% 
+    html_nodes('p.ico b') %>% 
+    html_text(trim = T)
+  year <- code[seq(2, length(code), 2)]
+  code <- code[seq(1, length(code), 2)]
+
+  funds <- web_i %>% 
+    html_nodes('div.item div.d p span b') %>% 
+    html_text(trim = T)
+  funds <- funds[seq(2, length(funds), 2)]
+  
+  data_i <- data.frame('title' = title,
+                       'author' = author,
+                       'unit' = unit,
+                       'code' = code,
+                       'yearStart' = year,
+                       'funds' = funds,
+                       'subject' = rep('H01', length(title)))
+  data <- rbind(data, data_i)
+  }
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
